@@ -1,0 +1,14 @@
+@import 'reset';
+@import 'variables';
+@import 'mixins';
+@import 'common';
+
+
+.my-panel {
+    width: 100px;
+    height: 100px;
+    border: 1px solid #333c94;
+    border-radius: 3px;
+
+    @include shadow;
+}

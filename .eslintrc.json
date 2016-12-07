@@ -1,0 +1,43 @@
+{
+    "env": {
+        "browser": true,
+        "commonjs": true,
+        "es6": true,
+        "jquery": true
+    },
+    "extends": ["eslint:recommended"],
+    "parserOptions": {
+        "ecmaFeatures": {
+            "globalReturn": true
+        },
+        "sourceType": "module"
+    },
+    "rules": {
+        "indent": [
+            "error",
+            4
+        ],
+        "linebreak-style": [
+            "error",
+            "unix"
+        ],
+        "quotes": [
+            "error",
+            "single"
+        ],
+        "semi": [
+            "error",
+            "always"
+        ],
+        "react/no-danger": 0,
+        "no-console": ["error", { "allow": ["info", "log", "warn", "error"] }],
+        "no-unused-vars": ["error", {
+            "vars": "all",
+            "args": "after-used",
+            "varsIgnorePattern": "[cC]ommunication"
+        }]
+    },
+    "globals": {
+        "loadCSS": true
+    }
+}

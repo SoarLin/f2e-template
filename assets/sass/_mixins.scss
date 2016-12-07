@@ -1,0 +1,27 @@
+@mixin clearfix {
+    &::after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+}
+
+@mixin shadow($color: #545454) {
+    box-shadow: 0 1px 1px 0px rgba($color, .4);
+}
+
+@mixin tablet {
+    @media screen and (max-width: $tablet-max) {
+        @content;
+    }
+}
+@mixin phone {
+    @media screen and (max-width: $mobile-max) {
+        @content;
+    }
+}
+@mixin phoneV {
+    @media screen and (max-width: $mobile-min) {
+        @content;
+    }
+}
