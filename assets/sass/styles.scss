@@ -4,11 +4,39 @@
 @import 'common';
 
 
+body {
+    padding: 50px;
+
+    @include tablet {
+        padding: 30px;
+    }
+    @include phone {
+        padding: 10px;
+    }
+}
+
 .my-panel {
-    width: 100px;
-    height: 100px;
+    font-size: 2em;
+    width: 700px;
+    height: 300px;
+    background-color: #aaaaaa;
     border: 1px solid #333c94;
     border-radius: 3px;
-
+    margin: 10px;
+    padding: 10px;
     @include shadow;
+
+    @include tablet {
+        color: #ffffff;
+        width: 85%;
+        height: 350px;
+        background-color: #787878;
+    }
+
+    @include phone {
+        color: #ffffff;
+        width: 90%;
+        height: 400px;
+        background-color: #565656;
+    }
 }
