@@ -1,6 +1,6 @@
 {
   "name": "ec-f2e",
-  "description": "e-commerce website page frontend",
+  "description": "frontend website page",
   "main": "app.js",
   "authors": [
     "Soar <soat@stco.tw>"
