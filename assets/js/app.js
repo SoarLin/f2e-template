@@ -5,6 +5,5 @@ $(document).ready(function(){
     loadCSS('./public/bower/Ionicons/css/ionicons.min.css');
 
     console.log('I am ready');
-    $('#title').text('JS黨已經載入');
 });
 
