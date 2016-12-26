@@ -19,6 +19,7 @@
 
 ## Folder Architecture
 
+````
 目錄結構
 .
 ├── .bowerrc
@@ -44,6 +45,7 @@
 │   ├── index.ejs
 │   └── partials/
 └── views/
+````
 
 ### 概念
 
@@ -88,7 +90,7 @@
 
 ## Command
 
-### gulp 
+### gulp
 
 
 指令       |   用途
