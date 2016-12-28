@@ -6,16 +6,16 @@
 	<body>
 		<% include ../partials/_navbar %>
 
-        <%- contents %>
+		<%- contents %>
 
-        <% include ../partials/_footer %>
+		<% include ../partials/_footer %>
 	</body>
 
 	<script src="../public/js/vendor.js"></script>
 	<% bowerJS.forEach(jsItem => { %>
-    <script src="../public/bower/<%= jsItem %>"></script>
-    <% }); %>
-    <% js.forEach(jsItem => { %>
-    <script src="../public/js/<%= jsItem %>"></script>
-    <% }); %>
+	<script src="../public/bower/<%= jsItem %>"></script>
+	<% }); %>
+	<% js.forEach(jsItem => { %>
+	<script src="../public/js/<%= jsItem %>"></script>
+	<% }); %>
 </html>
