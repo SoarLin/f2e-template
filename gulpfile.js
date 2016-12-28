@@ -1,16 +1,11 @@
 'use strict';
 
 var gulp = require('gulp');
-var rimraf = require('gulp-rimraf');
 var $ = require('gulp-load-plugins')();
 var isMac = /darwin/.test(process.platform);
-var sass = require('gulp-sass');
-var cssnano = require('gulp-cssnano');
-var sourcemaps = require('gulp-sourcemaps');
-var autoprefixer = require('gulp-autoprefixer');
 
 var environments = require('gulp-environments');
-var development = environments.development;
+// var development = environments.development;
 var production = environments.production;
 
 var sassOptions = {
@@ -24,26 +19,55 @@ var cssnanoOptions = {
     zindex: false
 };
 
-var assets_path = './assets/';
-var dest_path = './public/';
+var PATH = {
+    EJS: {
+        src: [ './templates/**/*.ejs', '!./templates/**/_*.ejs'],
+        dest: './views/'
+    },
+    SASS: {
+        src: './assets/sass/**/*.scss',
+        tmp: './assets/css/',
+        dest: './public/css/'
+    },
+    JS: {
+        src: './assets/js/**/*.js',
+        dest: './public/js/'
+    },
+    IMAGE: {
+        src: './assets/img/**/*.*',
+        dest: './public/img/'
+    },
+    CLEAN: ['./public/js', './public/css', './views/*.html']
+};
 
 /* EJS檔轉HTML */
 gulp.task('html', function() {
-    return gulp.src('./templates/*.ejs')
+    gulp.src(PATH.EJS.src)
+        .pipe($.plumber())
+        .pipe($.frontMatter({
+            property: 'data',
+            remove: true
+        }))
+        .pipe($.layout(function(file) {
+            return file.data;
+        }))
         .pipe($.ejs({},{ext:'.html'}))
-        .pipe(gulp.dest('./views/'));
+        .pipe(gulp.dest(PATH.EJS.dest))
+        .pipe($.if(isMac, $.notify({
+            message: 'EJS transfor to HTML complete'
+        })));
 });
 
 /* Sass 轉 main.css */
 gulp.task('styles', function () {
-    return gulp.src(assets_path + 'sass/**/*.scss')
-        .pipe(sourcemaps.init())
-        .pipe(sass(sassOptions).on('error', sass.logError))
-        .pipe(autoprefixer(autoprefixerOptions))
-        .pipe(gulp.dest(assets_path + 'css'))
-        .pipe(production(cssnano(cssnanoOptions)))
-        .pipe(sourcemaps.write('maps/'))
-        .pipe(gulp.dest(dest_path + 'css'))
+    return gulp.src(PATH.SASS.src)
+        .pipe($.sourcemaps.init())
+        .pipe($.sass(sassOptions).on('error', $.sass.logError))
+        .pipe($.autoprefixer(autoprefixerOptions))
+        .pipe(gulp.dest(PATH.SASS.tmp))
+        .pipe(production($.cssnano(cssnanoOptions)))
+        .pipe($.sourcemaps.write('maps/'))
+        .pipe(gulp.dest(PATH.SASS.dest))
         .pipe($.if(isMac, $.notify({
             message: 'Sass transfor to css complete'
         })));
@@ -53,20 +77,20 @@ gulp.task('styles', function () {
 gulp.task('bundle-vendor', function() {
     return gulp.src('./bundle-vendor.config.js')
         .pipe($.bundleAssets())
-        .pipe(gulp.dest(dest_path + 'js'));
+        .pipe(gulp.dest(PATH.JS.dest));
 });
 /* 連接,壓縮js檔案 */
 gulp.task('scripts', function(){
-    return gulp.src(assets_path + 'js/**/*.js')
+    return gulp.src(PATH.JS.src)
         .pipe($.babel({ presets: ['es2015'] }))
         .pipe($.eslint())
         .pipe($.eslint.format())
         .pipe($.concat('app.js'))
-        .pipe(gulp.dest(dest_path + 'js'))
+        .pipe(gulp.dest(PATH.JS.dest))
         .pipe(production($.uglifyjs({
             outSourceMap: 'maps/app.js.map'
         })))
-        .pipe(gulp.dest(dest_path + 'js'))
+        .pipe(gulp.dest(PATH.JS.dest))
         .pipe($.if(isMac, $.notify({
             message: 'JavaScript task complete'
         })));
@@ -74,30 +98,30 @@ gulp.task('scripts', function(){
 
 /* 壓縮png,jpg等圖片 */
 gulp.task('images', function(){
-    return gulp.src(assets_path + 'images/**/*.*')
+    return gulp.src(PATH.IMAGE.src)
         .pipe($.cache($.imagemin({
             interlaced: true,
             multipass: true,
             svgoPlugins: [{removeViewBox: false}],
             use: [require('imagemin-pngquant')()]
         })))
-        .pipe(gulp.dest(dest_path + 'img'));
+        .pipe(gulp.dest(PATH.IMAGE.dest));
 });
 
 gulp.task('clean', function(){
-    return gulp.src([ dest_path + 'css', dest_path + 'js', './views/*.html'],{ read: false })
-        .pipe(rimraf());
+    return gulp.src(PATH.CLEAN, { read: false })
+        .pipe($.rimraf());
 });
 
 gulp.task('watch', function(){
     // watch sass files change
-    gulp.watch(assets_path + 'sass/**/*.scss', ['styles']);
+    gulp.watch(PATH.SASS.src, ['styles']);
     // watch javascript files change
-    gulp.watch(assets_path + 'js/**/*.js', ['scripts']);
+    gulp.watch(PATH.JS.src, ['scripts']);
     // watch images files change
-    gulp.watch(assets_path + 'images/**/*.*', ['images']);
+    gulp.watch(PATH.IMAGE.src, ['images']);
     // watch ejs template files changes
-    gulp.watch('./templates/**/*.ejs', ['html']);
+    gulp.watch(PATH.EJS.src, ['html']);
 });
 
 gulp.task('default', ['clean'], function(){

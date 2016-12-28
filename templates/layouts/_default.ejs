@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+	<head>
+		<% include ../partials/_head %>
+	</head>
+	<body>
+		<% include ../partials/_navbar %>
+
+        <%- contents %>
+
+        <% include ../partials/_footer %>
+	</body>
+
+	<script src="../public/js/vendor.js"></script>
+	<% bowerJS.forEach(jsItem => { %>
+    <script src="../public/bower/<%= jsItem %>"></script>
+    <% }); %>
+    <% js.forEach(jsItem => { %>
+    <script src="../public/js/<%= jsItem %>"></script>
+    <% }); %>
+</html>

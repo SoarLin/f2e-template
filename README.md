@@ -81,7 +81,7 @@
 #### 單一檔案說明
 
 * .bowerrc : bower 設定檔, 指定下載的套件存放目錄
-* .eslintrc.json : esline 設定檔, 用來檢查 js 語法
+* .eslintrc.json : eslint 設定檔, 用來檢查 js 語法
 * .gitignore : git 要忽略的檔案設定
 * bower.json : bower 安裝套件與版本
 * bundle-vendor.config.js : 指定第三方套件 js 檔編譯成單一檔案，用來減少 request 數量
