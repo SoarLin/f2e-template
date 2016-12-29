@@ -61,6 +61,7 @@ gulp.task('html', function() {
 /* Sass 轉 main.css */
 gulp.task('styles', function () {
     return gulp.src(PATH.SASS.src)
+        .pipe($.plumber())
         .pipe($.sourcemaps.init())
         .pipe($.sass(sassOptions).on('error', $.sass.logError))
         .pipe($.autoprefixer(autoprefixerOptions))
@@ -76,12 +77,14 @@ gulp.task('styles', function () {
 /* 打包第三方JS套件 */
 gulp.task('bundle-vendor', function() {
     return gulp.src('./bundle-vendor.config.js')
+        .pipe($.plumber())
         .pipe($.bundleAssets())
         .pipe(gulp.dest(PATH.JS.dest));
 });
 /* 連接,壓縮js檔案 */
 gulp.task('scripts', function(){
     return gulp.src(PATH.JS.src)
+        .pipe($.plumber())
         .pipe($.babel({ presets: ['es2015'] }))
         .pipe($.eslint())
         .pipe($.eslint.format())
@@ -99,6 +102,7 @@ gulp.task('scripts', function(){
 /* 壓縮png,jpg等圖片 */
 gulp.task('images', function(){
     return gulp.src(PATH.IMAGE.src)
+        .pipe($.plumber())
         .pipe($.cache($.imagemin({
             interlaced: true,
             multipass: true,
