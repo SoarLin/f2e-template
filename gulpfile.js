@@ -22,7 +22,8 @@ var cssnanoOptions = {
 var PATH = {
     EJS: {
         src: [ './templates/**/*.ejs', '!./templates/**/_*.ejs'],
-        dest: './views/'
+        tmp: './tmp/',
+        dest: './public/'
     },
     SASS: {
         src: './assets/sass/**/*.scss',
@@ -34,10 +35,23 @@ var PATH = {
         dest: './public/js/'
     },
     IMAGE: {
-        src: './assets/img/**/*.*',
+        src: './assets/images/**/*.*',
         dest: './public/img/'
     },
-    CLEAN: ['./public/js', './public/css', './views/*.html']
+    FONT: {
+        src: './assets/bower/**/fonts/**/*',
+        dest: './public/fonts/'
+    },
+    RELEASE: {
+        base: './dist/',
+        js: './dist/js/',
+        css: './dist/css/',
+        img: './dist/img/',
+        font: './dist/fonts/'
+    },
+    CLEAN: ['./public/js', './public/css',
+        './public/img', './public/fonts',
+        './tmp/*.html', './public/*.html', './dist/*']
 };
 
 /* EJS檔轉HTML */
@@ -53,9 +67,20 @@ gulp.task('html', function() {
         }))
         .pipe($.ejs({},{ext:'.html'}))
         .pipe(gulp.dest(PATH.EJS.dest))
+        .pipe(gulp.dest(PATH.EJS.tmp))
         .pipe($.if(isMac, $.notify({
             message: 'EJS transfor to HTML complete'
         })));
+});
+
+gulp.task('htmlmin', ['bundle-vendor', 'fonts', 'images', 'styles', 'scripts'], function() {
+    return gulp.src('tmp/*.html')
+        // .pipe($.useref({searchPath: ['.tmp', '.', './piblic/js']}))
+        .pipe($.useref({searchPath: ['.tmp', '.']}))
+        .pipe($.if('*.js', $.uglify()))
+        .pipe($.if('*.css', $.cssnano({zindex: false, safe: true, autoprefixer: false})))
+        // .pipe($.if('*.html', $.htmlmin({collapseWhitespace: true})))
+        .pipe(gulp.dest(PATH.RELEASE.base));
 });
 
 /* Sass 轉 main.css */
@@ -109,7 +134,16 @@ gulp.task('images', function(){
             svgoPlugins: [{removeViewBox: false}],
             use: [require('imagemin-pngquant')()]
         })))
-        .pipe(gulp.dest(PATH.IMAGE.dest));
+        .pipe(gulp.dest(PATH.IMAGE.dest))
+        .pipe(gulp.dest(PATH.RELEASE.img));
+});
+
+gulp.task('fonts', function() {
+    return gulp.src(['./assets/bower/**/fonts/*'])
+        .pipe($.filter('**/*.{eot,svg,ttf,woff,woff2}'))
+        .pipe($.flatten())
+        .pipe(gulp.dest(PATH.FONT.dest))
+        .pipe(gulp.dest(PATH.RELEASE.font));
 });
 
 gulp.task('clean', function(){
@@ -124,10 +158,13 @@ gulp.task('watch', function(){
     gulp.watch(PATH.JS.src, ['scripts']);
     // watch images files change
     gulp.watch(PATH.IMAGE.src, ['images']);
+    // watch font files change
+    gulp.watch(PATH.FONT.src, ['fonts']);
     // watch ejs template files changes
     gulp.watch(PATH.EJS.src, ['html']);
 });
 
 gulp.task('default', ['clean'], function(){
-    gulp.start('images', 'bundle-vendor', 'styles', 'scripts', 'html');
+    // gulp.start('images', 'fonts', 'bundle-vendor', 'styles', 'scripts', 'html');
+    gulp.start('html', 'htmlmin');
 });

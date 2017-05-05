@@ -11,11 +11,20 @@
 		<% include ../partials/_footer %>
 	</body>
 
+	<% function getLastName(filename) {
+		return filename.replace(/^.*[\\\/]/, '');
+	} %>
+	<!-- build:js js/vendor.js %> -->
 	<script src="../public/js/vendor.js"></script>
+	<!-- endbuild -->
 	<% bowerJS.forEach(jsItem => { %>
-	<script src="../public/bower/<%= jsItem %>"></script>
+	<!-- build:js js/<%= getLastName(jsItem) %> -->
+	<script src="../assets/bower/<%= jsItem %>"></script>
+	<!-- endbuild -->
 	<% }); %>
 	<% js.forEach(jsItem => { %>
+	<!-- build:js js/<%= getLastName(jsItem) %> -->
 	<script src="../public/js/<%= jsItem %>"></script>
+	<!-- endbuild -->
 	<% }); %>
 </html>
