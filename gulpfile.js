@@ -139,7 +139,7 @@ gulp.task('images', function(){
 });
 
 gulp.task('fonts', function() {
-    return gulp.src(['./assets/bower/**/fonts/*'])
+    return gulp.src(['./assets/bower/**/fonts/**/*'])
         .pipe($.filter('**/*.{eot,svg,ttf,woff,woff2}'))
         .pipe($.flatten())
         .pipe(gulp.dest(PATH.FONT.dest))
